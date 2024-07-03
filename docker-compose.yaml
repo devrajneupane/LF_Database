@@ -1,0 +1,43 @@
+services:
+  postgres:
+    container_name: postgres
+    image: postgres:16
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PW}
+      - POSTGRES_DB=${POSTGRES_DB}
+    volumes:
+      - postgresql_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    restart: always
+
+  pgadmin:
+    container_name: pgadmin
+    image: dpage/pgadmin4:8.9
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=${PGADMIN_MAIL}
+      - PGADMIN_DEFAULT_PASSWORD=${PGADMIN_PW}
+    ports:
+      - "5050:80"
+    restart: always
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+    depends_on:
+      - postgres
+
+  dbeaver:
+    container_name: cloudbeaver
+    image: dbeaver/cloudbeaver:24.1.1
+    restart: always
+    volumes:
+      - cloudbeaver_data:/opt/cloudbeaver/workspace
+    ports:
+      - 6060:8978
+    depends_on:
+      - postgres
+
+volumes:
+  postgresql_data:
+  pgadmin_data:
+  cloudbeaver_data:
